@@ -1,6 +1,6 @@
 # Personal Portfolio Website
 
-A fully responsive personal portfolio built with **React + Vite** and **Framer Motion**.
+A fully responsive personal portfolio now built with **Next.js (App Router)**, **React**, and **Framer Motion**.
 
 ## Implemented Requirements
 
@@ -12,11 +12,14 @@ A fully responsive personal portfolio built with **React + Vite** and **Framer M
 - 3+ on-scroll animations (section reveals, skills stagger, project card stagger)
 - `prefers-reduced-motion` accessibility fallback
 - Google Fonts typography setup
+- SEO-focused metadata in `app/layout.jsx`
+- `robots.txt` and `sitemap.xml` generated through Next.js metadata routes
+- JSON-LD structured data for better search engine understanding
 
 ## Tech Stack
 
+- Next.js (App Router)
 - React
-- Vite
 - Framer Motion
 - CSS
 
@@ -36,8 +39,9 @@ npm run build
 
 ## Deploy
 
-Deploy the `dist/` output using a free hosting platform such as Netlify or Vercel.
+Deploy directly to Vercel (recommended for Next.js) or any platform supporting Node.js apps.
 
 ```bash
 npm run build
+npm run start
 ```
