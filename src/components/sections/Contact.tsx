@@ -58,31 +58,54 @@ export default function Contact() {
             </a>
           </motion.div>
 
-          <motion.form 
-            className="glass rounded-2xl p-8 flex flex-col gap-6"
+          <motion.div 
+            className="glass rounded-3xl p-10 flex flex-col justify-between h-full relative overflow-hidden group border-primary/20 hover:border-primary/50 transition-colors"
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            onSubmit={(e) => e.preventDefault()}
           >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none group-hover:bg-primary/20 transition-colors duration-700" />
+            
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-2">Name</label>
-              <input type="text" id="name" className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-white" placeholder="John Doe" />
+              <div className="flex items-center gap-3 mb-8">
+                <span className="relative flex h-4 w-4">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-4 w-4 bg-primary"></span>
+                </span>
+                <h3 className="text-2xl font-bold tracking-tight text-white">Status Board</h3>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold mb-1">Availability</p>
+                  <p className="text-lg font-medium text-white flex items-center gap-2">
+                    Actively seeking new opportunities
+                  </p>
+                </div>
+                
+                <div>
+                  <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold mb-1">Current Focus</p>
+                  <p className="text-lg font-medium text-white">
+                    Agentic Workflows, Next.js Architectures
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold mb-1">Location</p>
+                  <p className="text-lg font-medium text-white">
+                    Andhra Pradesh, India (Open to Remote)
+                  </p>
+                </div>
+              </div>
             </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-2">Email</label>
-              <input type="email" id="email" className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-white" placeholder="john@example.com" />
+
+            <div className="mt-10 pt-8 border-t border-white/10">
+              <p className="text-muted-foreground italic">
+                &quot;I build things end-to-end from schema design to deployment. Let&apos;s build something incredible together.&quot;
+              </p>
             </div>
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-muted-foreground mb-2">Message</label>
-              <textarea id="message" rows={4} className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-white resize-none" placeholder="Your message here..." />
-            </div>
-            <button type="submit" className="flex items-center justify-center gap-2 w-full py-4 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/80 transition-colors mt-2">
-              Send Message
-              <Send size={18} />
-            </button>
-          </motion.form>
+          </motion.div>
 
         </div>
       </div>
