@@ -115,46 +115,6 @@ export default function Contact() {
             ))}
           </div>
 
-          {/* Status board */}
-          <motion.div
-            className="relative rounded-3xl bg-white/[0.02] border border-white/[0.06] p-10 md:p-14 overflow-hidden"
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            {/* Corner glow */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative z-10">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
-                  </span>
-                  <span className="text-xs font-mono text-white/50 uppercase tracking-wider">Availability</span>
-                </div>
-                <p className="text-white font-medium text-lg">Open to opportunities</p>
-              </div>
-
-              <div>
-                <span className="text-xs font-mono text-white/50 uppercase tracking-wider block mb-2">Current Focus</span>
-                <p className="text-white font-medium text-lg">Agentic Workflows & Next.js</p>
-              </div>
-
-              <div>
-                <span className="text-xs font-mono text-white/50 uppercase tracking-wider block mb-2">Location</span>
-                <p className="text-white font-medium text-lg">India · Open to Remote</p>
-              </div>
-            </div>
-
-            <div className="mt-10 pt-8 border-t border-white/[0.04]">
-              <p className="text-white/40 font-mono text-sm italic">
-                &quot;I build things end-to-end from schema design to deployment.&quot;
-              </p>
-            </div>
-          </motion.div>
         </div>
       </div>
     </section>
