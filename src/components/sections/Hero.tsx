@@ -4,36 +4,6 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Download } from "lucide-react";
 import { useRef } from "react";
 
-// Orbiting ring of tech keywords
-function OrbitRing({ radius, duration, items, reverse = false }: { radius: number; duration: number; items: string[]; reverse?: boolean }) {
-  return (
-    <motion.div
-      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.03]"
-      style={{ width: radius * 2, height: radius * 2 }}
-      animate={{ rotate: reverse ? -360 : 360 }}
-      transition={{ duration, repeat: Infinity, ease: "linear" }}
-    >
-      {items.map((item, i) => {
-        const angle = (360 / items.length) * i;
-        return (
-          <motion.span
-            key={item}
-            className="absolute text-[10px] md:text-xs font-mono text-white/35 whitespace-nowrap select-none"
-            style={{
-              left: '50%',
-              top: '50%',
-              transform: `rotate(${angle}deg) translateX(${radius}px) rotate(-${angle}deg)`,
-            }}
-            animate={{ rotate: reverse ? 360 : -360 }}
-            transition={{ duration, repeat: Infinity, ease: "linear" }}
-          >
-            {item}
-          </motion.span>
-        );
-      })}
-    </motion.div>
-  );
-}
 
 export default function Hero() {
   const ref = useRef(null);
@@ -129,7 +99,7 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1.5 }}
         >
-          spending most of my time on full-stack apps and AI systems, mostly things I wanted to exist and sometimes couldn't find.        </motion.p>
+          spending most of my time on full-stack apps and AI systems, mostly things I wanted to exist and sometimes couldn&apos;t find.        </motion.p>
 
         <motion.div
           className="flex flex-col sm:flex-row items-center justify-center gap-4"

@@ -24,7 +24,7 @@ function AnimatedCounter({ value, suffix = "", decimals = 0 }: { value: number; 
       }
     });
     return unsubscribe;
-  }, [springValue, suffix]);
+  }, [springValue, suffix, decimals]);
 
   return <span ref={ref}>0{suffix}</span>;
 }
