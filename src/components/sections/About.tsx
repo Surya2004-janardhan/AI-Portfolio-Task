@@ -5,7 +5,7 @@ import { GraduationCap, Briefcase, Code2 } from "lucide-react";
 import { useRef, useEffect } from "react";
 
 // Animated counter that counts up when in view
-function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: string }) {
+function AnimatedCounter({ value, suffix = "", decimals = 0 }: { value: number; suffix?: string; decimals?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const motionValue = useMotionValue(0);
   const springValue = useSpring(motionValue, { stiffness: 50, damping: 20 });
@@ -20,7 +20,7 @@ function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: strin
   useEffect(() => {
     const unsubscribe = springValue.on("change", (latest) => {
       if (ref.current) {
-        ref.current.textContent = Math.floor(latest) + suffix;
+        ref.current.textContent = latest.toFixed(decimals) + suffix;
       }
     });
     return unsubscribe;
@@ -35,6 +35,7 @@ const cards = [
     title: "Education",
     stat: 8.5,
     statSuffix: "",
+    decimals: 1,
     statLabel: "CGPA / 10",
     description: "B.Tech in AI & ML — Aditya College of Engineering",
     highlights: ["Artificial Intelligence", "Machine Learning", "Data Structures"],
@@ -44,6 +45,7 @@ const cards = [
     title: "Experience",
     stat: 20,
     statSuffix: "+",
+    decimals: 0,
     statLabel: "AI AGENTS DEPLOYED",
     description: "AI Intern at GrowStack.ai — Production RAG Pipelines",
     highlights: ["LangChain", "RAG Pipelines", "70% Effort Reduction"],
@@ -54,6 +56,7 @@ const cards = [
     title: "Problem Solving",
     stat: 800,
     statSuffix: "+",
+    decimals: 0,
     statLabel: "PROBLEMS SOLVED",
     description: "Algorithmic mastery across competitive platforms",
     highlights: ["Algorithms", "Data Structures", "System Design"],
@@ -122,7 +125,7 @@ export default function About() {
               {/* Large stat number as background */}
               <div className="absolute top-4 right-4 pointer-events-none select-none">
                 <span className={`text-6xl md:text-7xl font-black leading-none ${card.featured ? 'text-primary/[0.08]' : 'text-white/[0.04]'}`}>
-                  <AnimatedCounter value={card.stat} suffix={card.statSuffix} />
+                  <AnimatedCounter value={card.stat} suffix={card.statSuffix} decimals={card.decimals} />
                 </span>
               </div>
 
@@ -144,7 +147,7 @@ export default function About() {
                 {/* Stat label */}
                 <div className="mb-6">
                   <span className={`text-3xl font-black ${card.featured ? 'text-primary' : 'text-white'}`}>
-                    <AnimatedCounter value={card.stat} suffix={card.statSuffix} />
+                    <AnimatedCounter value={card.stat} suffix={card.statSuffix} decimals={card.decimals} />
                   </span>
                   <span className="text-white/40 text-xs font-mono uppercase tracking-wider ml-2">{card.statLabel}</span>
                 </div>

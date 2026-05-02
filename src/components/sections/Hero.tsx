@@ -49,11 +49,23 @@ export default function Hero() {
 
   return (
     <section ref={ref} className="relative min-h-[120vh] flex items-center justify-center overflow-hidden">
-      {/* Orbiting tech rings */}
+      {/* Clean concentric rings */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <OrbitRing radius={220} duration={40} items={["PYTHON", "REACT", "NEXT.JS", "NODE", "AI", "ML"]} />
-        <OrbitRing radius={340} duration={55} items={["LANGCHAIN", "RAG", "DOCKER", "REDIS", "KAFKA", "TYPESCRIPT", "MONGODB", "GROQ"]} reverse />
-        <OrbitRing radius={460} duration={70} items={["FULL-STACK", "AI-AGENTS", "DEEP-LEARNING", "POSTGRESQL", "EXPRESS", "FLASK"]} />
+        <motion.div
+          className="w-[440px] h-[440px] rounded-full border border-white/[0.03]"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute w-[680px] h-[680px] rounded-full border border-white/[0.02]"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute w-[920px] h-[920px] rounded-full border border-white/[0.015]"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
+        />
       </div>
 
       {/* Center reticle crosshair */}
@@ -117,8 +129,7 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1.5 }}
         >
-          AI Intern · Full Stack Engineer · Deploying autonomous agents, RAG pipelines, and robust production systems.
-        </motion.p>
+          spending most of my time on full-stack apps and AI systems, mostly things I wanted to exist and sometimes couldn't find.        </motion.p>
 
         <motion.div
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
@@ -136,7 +147,9 @@ export default function Hero() {
             <ArrowRight className="group-hover:translate-x-2 transition-transform" size={20} />
           </motion.a>
           <motion.a
-            href="#"
+            href="https://drive.google.com/file/d/1iHSh3v_KGjj8Ay1q2IqePfb1LvzFmzg0/view?usp=sharing"
+            target="_blank"
+            rel="noreferrer"
             className="flex items-center justify-center gap-2 px-8 py-4 border border-white/10 rounded-full font-bold text-white/60 hover:text-white hover:border-white/30 transition-all w-full sm:w-auto"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
