@@ -1,5 +1,6 @@
 const isGithubActions = process.env.GITHUB_ACTIONS || false;
-const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1] ?? '';
+const repository = process.env.GITHUB_REPOSITORY ?? '';
+const repoName = repository.includes('/') ? repository.split('/')[1] : repository;
 const basePath = isGithubActions && repoName ? `/${repoName}` : '';
 
 /** @type {import('next').NextConfig} */
