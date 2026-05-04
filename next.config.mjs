@@ -1,7 +1,13 @@
 const isGithubActions = process.env.GITHUB_ACTIONS || false;
 const repository = (process.env.GITHUB_REPOSITORY ?? '').trim();
 const repoParts = repository.split('/');
-const hasValidRepo = repoParts.length === 2 && repoParts[0] && repoParts[1];
+const repoNamePattern = /^[A-Za-z0-9_.-]+$/;
+const hasValidRepo =
+  repoParts.length === 2 &&
+  repoParts[0] &&
+  repoParts[1] &&
+  repoNamePattern.test(repoParts[0]) &&
+  repoNamePattern.test(repoParts[1]);
 const repoName = hasValidRepo ? repoParts[1] : '';
 
 if (isGithubActions && !hasValidRepo) {
@@ -10,7 +16,7 @@ if (isGithubActions && !hasValidRepo) {
   );
 }
 
-const basePath = isGithubActions ? `/${repoName}` : '';
+const basePath = isGithubActions && hasValidRepo ? `/${repoName}` : '';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
