@@ -1,8 +1,8 @@
 const isGithubActions = process.env.GITHUB_ACTIONS || false;
 const repository = process.env.GITHUB_REPOSITORY ?? '';
 const repoParts = repository.split('/');
-const [owner, repoName] = repoParts;
-const hasValidRepo = repoParts.length === 2 && owner && repoName;
+const hasValidRepo = repoParts.length === 2 && repoParts[0] && repoParts[1];
+const repoName = hasValidRepo ? repoParts[1] : '';
 
 if (isGithubActions && !hasValidRepo) {
   throw new Error(
