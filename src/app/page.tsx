@@ -5,10 +5,12 @@ import Skills from "@/components/sections/Skills";
 import Projects from "@/components/sections/Projects";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/layout/Footer";
+import { ClassyBackground } from "@/components/ui/classy-background";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-background relative selection:bg-primary selection:text-primary-foreground">
+      <ClassyBackground />
       <Navbar />
       <Hero />
       <About />
