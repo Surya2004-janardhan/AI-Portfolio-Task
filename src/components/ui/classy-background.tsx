@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import React from "react";
 
 /**
  * AmbientBackground — Subtle atmospheric layer for the entire page.

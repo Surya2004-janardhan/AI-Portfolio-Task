@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Code, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -21,10 +21,10 @@ export const CurveCarousel = ({ items }: { items: Item[] }) => {
   const [isPaused, setIsPaused] = useState(false);
 
   // Left to right flow (prevItem logic)
-  const autoAdvance = () => {
+  const autoAdvance = useCallback(() => {
     setDirection(-1);
     setIndex((prev) => (prev - 1 + items.length) % items.length);
-  };
+  }, [items.length]);
 
   const nextItem = () => {
     setDirection(1);

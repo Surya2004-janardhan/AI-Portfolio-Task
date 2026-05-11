@@ -13,15 +13,11 @@ import { cn } from "@/lib/utils";
  * Card hover: amber glow shadow (matching screen palette).
  */
 
-// Per-card accent pairs: [gradientClass, glowColor]
+// Per-card accent pairs matching the site theme (amber/cyan variations)
 const cardAccents = [
-  { gradient: "from-amber-500/25 to-orange-600/10",   glow: "hsl(43 95% 52% / 0.2)"  },
-  { gradient: "from-cyan-400/25 to-sky-500/10",        glow: "hsl(195 100% 50% / 0.18)" },
-  { gradient: "from-emerald-400/20 to-teal-600/10",    glow: "hsl(160 70% 45% / 0.18)" },
-  { gradient: "from-violet-500/20 to-purple-600/10",   glow: "hsl(265 70% 60% / 0.18)" },
-  { gradient: "from-rose-400/20 to-pink-600/10",       glow: "hsl(340 75% 60% / 0.18)" },
-  { gradient: "from-sky-400/20 to-indigo-600/10",      glow: "hsl(215 80% 60% / 0.18)" },
-  { gradient: "from-amber-400/20 to-yellow-600/10",    glow: "hsl(45 95% 55% / 0.2)"  },
+  { gradient: "from-amber-500/25 to-orange-600/10",   glow: "hsl(var(--primary) / 0.2)"  },
+  { gradient: "from-cyan-400/25 to-sky-500/10",        glow: "hsl(var(--cyan) / 0.18)" },
+  { gradient: "from-amber-400/20 to-yellow-600/10",    glow: "hsl(var(--primary) / 0.2)"  },
 ];
 
 function CarouselCard({
@@ -36,7 +32,7 @@ function CarouselCard({
   return (
     <div
       className={cn(
-        "rainbow-border group relative shrink-0 rounded-[2rem] overflow-hidden transition-all duration-700",
+        "group relative shrink-0 rounded-[2rem] overflow-hidden transition-all duration-700",
         "w-[85vw] md:w-[540px] lg:w-[720px]"
       )}
       style={{
@@ -44,28 +40,20 @@ function CarouselCard({
         boxShadow: "0 4px 32px rgba(0,0,0,0.5)",
       }}
       onMouseEnter={(e) => {
-        (e.currentTarget as HTMLDivElement).style.boxShadow = `0 20px 60px ${accent.glow}, 0 4px 32px rgba(0,0,0,0.5)`;
-        (e.currentTarget as HTMLDivElement).style.transform = "scale(1.02)";
+        (e.currentTarget as HTMLDivElement).style.boxShadow = `0 30px 60px -15px hsl(var(--primary) / 0.25), 0 4px 32px rgba(0,0,0,0.5)`;
+        (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)";
       }}
       onMouseLeave={(e) => {
         (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 32px rgba(0,0,0,0.5)";
-        (e.currentTarget as HTMLDivElement).style.transform = "scale(1)";
+        (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
       }}
     >
-      {/* Accent top bar */}
-      <div
-        className={cn(
-          "absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r opacity-60 group-hover:opacity-100 transition-opacity duration-700",
-          accent.gradient
-        )}
-        aria-hidden="true"
-      />
 
       {/* Card body */}
       <div className="flex flex-col min-h-[420px]">
         {/* Visual area — gradient abstraction */}
         <div
-          className="h-[180px] relative overflow-hidden shrink-0 border-b"
+          className="h-[260px] md:h-[300px] relative overflow-hidden shrink-0 border-b"
           style={{ borderColor: "hsl(var(--border))" }}
         >
           <div
@@ -75,17 +63,19 @@ function CarouselCard({
             )}
             aria-hidden="true"
           />
-          {/* Project GIF placeholder */}
-          <div className="absolute inset-0 opacity-40 group-hover:opacity-75 transition-opacity duration-700">
-            <img
-              src={`/your-gif-file-name.gif`}
-              alt={`${project.title} preview`}
-              className="w-full h-full object-cover"
-              loading="lazy"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
+          {/* Project Image */}
+          <div className="absolute inset-0 opacity-40 group-hover:opacity-90 transition-opacity duration-700">
+            {project.image && (
+              <img
+                src={project.image}
+                alt={`${project.title} preview`}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+            )}
           </div>
           <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
             <span
@@ -102,22 +92,22 @@ function CarouselCard({
         </div>
 
         {/* Text content */}
-        <div className="flex-1 p-8 md:p-10 flex flex-col justify-between">
+        <div className="flex-1 p-6 md:p-8 flex flex-col justify-between">
           <div>
             <span
-              className="text-[10px] md:text-xs font-mono uppercase tracking-[0.4em] block mb-3"
+              className="text-[10px] md:text-[11px] font-mono uppercase tracking-[0.4em] block mb-2"
               style={{ color: "hsl(var(--muted-foreground))" }}
             >
               {project.subtitle}
             </span>
             <h3
-              className="text-2xl md:text-3xl font-black heading-display mb-4"
+              className="text-xl md:text-2xl font-black heading-display mb-3"
               style={{ color: "hsl(var(--foreground))" }}
             >
               {project.title}
             </h3>
             <p
-              className="text-sm md:text-base leading-relaxed mb-6"
+              className="text-xs md:text-sm leading-relaxed mb-4"
               style={{ color: "hsl(var(--foreground) / 0.5)" }}
             >
               {project.description}

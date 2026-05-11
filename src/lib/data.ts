@@ -52,6 +52,7 @@ export const projects = [
     tech: ["Node.js", "Python", "React", "Gemini 2.0", "FFmpeg"],
     github: "https://github.com/SuryaJanardhan/Dreams",
     featured: true,
+    image: "/img-1.webp",
   },
   {
     id: "aditya-foods",
@@ -62,6 +63,7 @@ export const projects = [
     tech: ["React Native", "Node.js", "SQL", "Redis", "Expo"],
     github: "https://github.com/SuryaJanardhan/AdtFoods",
     featured: false,
+    image: "/img-2.webp",
   },
   {
     id: "ai-sensei",
@@ -72,6 +74,7 @@ export const projects = [
     tech: ["React.js", "Node.js", "MongoDB", "Groq API", "Socket.IO"],
     github: "https://github.com/SuryaJanardhan/AI-sensei",
     featured: false,
+    image: "/img-3.webp",
   },
   {
     id: "redis-leaderboard",
@@ -83,6 +86,7 @@ export const projects = [
     github:
       "https://github.com/SuryaJanardhan/Redis-Powered-Game-Leaderboard-with-Atomic-Operations-and-Real-Time-Updates",
     featured: false,
+    image: "/img-1.webp",
   },
   {
     id: "chunked-transfer",
@@ -94,6 +98,7 @@ export const projects = [
     github:
       "https://github.com/SuryaJanardhan/High-Performance-Large-File-Transfer-Service-with-Chunked-Uploads",
     featured: false,
+    image: "/img-2.webp",
   },
   {
     id: "emotion-analyzer",
@@ -105,6 +110,7 @@ export const projects = [
     github:
       "https://github.com/SuryaJanardhan/emotion-based-stress-analyzer-desktop-app",
     featured: false,
+    image: "/img-3.webp",
   },
   {
     id: "iot-analytics",
@@ -116,6 +122,7 @@ export const projects = [
     github:
       "https://github.com/SuryaJanardhan/An-ioT-Sensor-Analytics-Platform-with-TimescaleDB",
     featured: false,
+    image: "/img-1.webp",
   },
 ];
 

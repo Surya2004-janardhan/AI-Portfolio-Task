@@ -105,7 +105,7 @@ export default function Skills() {
             transition={{ duration: 0.9, ease, delay: 0.15 }}
           >
             Technical{" "}
-            <span style={{ color: "hsl(var(--primary))" }}>Arsenal</span>
+            <span className="text-glow-amber" style={{ color: "hsl(var(--primary))" }}>Arsenal</span>
           </motion.h2>
         </motion.div>
 
@@ -213,14 +213,15 @@ export default function Skills() {
                     <motion.span
                       key={skill}
                       className={cn(
-                        "text-sm font-medium px-4 py-2.5 rounded-xl border transition-all duration-300 cursor-default select-none"
+                        "relative overflow-hidden text-sm font-medium px-5 py-3 rounded-xl border transition-all duration-300 cursor-default select-none",
+                        isActive ? "glaze-card glow-border-anim shadow-sm" : ""
                       )}
                       style={
                         isActive
                           ? {
-                              background: "hsl(var(--surface-2) / 0.6)",
+                              background: "hsl(var(--surface-2) / 0.8)",
                               borderColor: "hsl(var(--border-bright))",
-                              color: "hsl(var(--foreground) / 0.75)",
+                              color: "hsl(var(--foreground) / 0.9)",
                             }
                           : {
                               background: "hsl(var(--surface-1) / 0.3)",
@@ -231,14 +232,16 @@ export default function Skills() {
                       whileHover={
                         isActive
                           ? {
-                              y: -3,
-                              scale: 1.04,
+                              y: -4,
+                              scale: 1.05,
                               color: "hsl(var(--primary))",
+                              borderColor: "hsl(var(--primary) / 0.5)",
+                              boxShadow: "0 10px 20px hsl(var(--primary)/0.15)",
                             }
                           : {}
                       }
-                      initial={{ opacity: 0, scale: 0.88 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
+                      initial={{ opacity: 0, scale: 0.8, y: 15 }}
+                      whileInView={{ opacity: 1, scale: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.35, delay: si * 0.03 }}
                     >

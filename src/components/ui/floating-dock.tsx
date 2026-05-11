@@ -47,7 +47,7 @@ const FloatingDockMobile = ({
         {open && (
           <motion.div
             layoutId="nav"
-            className="absolute bottom-full mb-4 inset-x-0 flex flex-col gap-3"
+            className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 flex flex-col gap-3 w-max"
           >
             {items.map((item, idx) => (
               <motion.div
@@ -106,13 +106,13 @@ const FloatingDockDesktop = ({
   items: { title: string; icon: React.ReactNode; href: string }[];
   className?: string;
 }) => {
-  let mouseX = useMotionValue(Infinity);
+  const mouseX = useMotionValue(Infinity);
   return (
     <motion.div
       onMouseMove={(e) => mouseX.set(e.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "mx-auto hidden md:flex h-20 gap-4 items-end rounded-[2.5rem] bg-neutral-950/20 backdrop-blur-2xl px-6 pb-4 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]",
+        "mx-auto hidden md:flex h-16 gap-2 items-center rounded-[2rem] bg-black/10 backdrop-blur-3xl px-4 border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.5)]",
         className
       )}
     >
@@ -134,36 +134,36 @@ function IconContainer({
   icon: React.ReactNode;
   href: string;
 }) {
-  let ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
-  let distance = useTransform(mouseX, (val) => {
-    let bounds = ref.current?.getBoundingClientRect() || { x: 0, width: 0 };
+  const distance = useTransform(mouseX, (val) => {
+    const bounds = ref.current?.getBoundingClientRect() || { x: 0, width: 0 };
     return val - bounds.x - bounds.width / 2;
   });
 
-  let widthTransform = useTransform(distance, [-150, 0, 150], [48, 58, 48]);
-  let heightTransform = useTransform(distance, [-150, 0, 150], [48, 58, 48]);
+  const widthTransform = useTransform(distance, [-150, 0, 150], [56, 78, 56]);
+  const heightTransform = useTransform(distance, [-150, 0, 150], [56, 78, 56]);
 
-  let widthIconTransform = useTransform(distance, [-150, 0, 150], [24, 29, 24]);
-  let heightIconTransform = useTransform(distance, [-150, 0, 150], [24, 29, 24]);
+  const widthIconTransform = useTransform(distance, [-150, 0, 150], [30, 42, 30]);
+  const heightIconTransform = useTransform(distance, [-150, 0, 150], [30, 42, 30]);
 
-  let width = useSpring(widthTransform, {
+  const width = useSpring(widthTransform, {
     mass: 0.1,
     stiffness: 150,
     damping: 15,
   });
-  let height = useSpring(heightTransform, {
+  const height = useSpring(heightTransform, {
     mass: 0.1,
     stiffness: 150,
     damping: 15,
   });
 
-  let widthIcon = useSpring(widthIconTransform, {
+  const widthIcon = useSpring(widthIconTransform, {
     mass: 0.1,
     stiffness: 150,
     damping: 15,
   });
-  let heightIcon = useSpring(heightIconTransform, {
+  const heightIcon = useSpring(heightIconTransform, {
     mass: 0.1,
     stiffness: 150,
     damping: 15,
@@ -175,13 +175,15 @@ function IconContainer({
     <Link href={href}>
       <motion.div
         ref={ref}
-        style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
-        className="aspect-square rounded-[1.5rem] bg-white/[0.03] flex items-center justify-center relative border border-white/5 transition-all duration-300 shadow-inner group"
+        onMouseLeave={() => setHovered(false)}
+        className="aspect-square rounded-[1.5rem] flex items-center justify-center relative transition-all duration-300 group"
         style={{
-          backgroundColor: hovered ? "hsl(var(--primary) / 0.15)" : "rgba(255,255,255,0.03)",
-          borderColor: hovered ? "hsl(var(--primary) / 0.4)" : "rgba(255,255,255,0.05)",
-          boxShadow: hovered ? "0 0 20px hsl(var(--primary)/0.2), inset 0 0 10px hsl(var(--primary)/0.1)" : "inset 0 0 0 rgba(0,0,0,0)",
+          width,
+          height,
+          backgroundColor: hovered ? "hsl(var(--primary) / 0.35)" : "transparent",
+          border: "none",
+          boxShadow: hovered ? "0 0 24px hsl(var(--primary)/0.3), inset 0 0 12px hsl(var(--primary)/0.2)" : "none",
         }}
       >
         <AnimatePresence>
@@ -190,7 +192,7 @@ function IconContainer({
               initial={{ opacity: 0, y: 10, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 5, x: "-50%" }}
-              className="px-3 py-1.5 whitespace-pre rounded-xl bg-black/80 backdrop-blur-md border border-white/10 text-white absolute left-1/2 -top-14 w-fit text-[10px] font-mono tracking-widest uppercase shadow-2xl"
+              className="px-3 py-1.5 whitespace-pre rounded-xl bg-black/80 backdrop-blur-md border border-white/10 text-white absolute left-1/2 -top-16 w-fit text-[10px] font-mono tracking-widest uppercase shadow-2xl pointer-events-none"
             >
               {title}
             </motion.div>

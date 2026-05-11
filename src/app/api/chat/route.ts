@@ -1,6 +1,6 @@
 import Groq from "groq-sdk";
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+export const dynamic = "force-dynamic";
 
 const SURYA_SYSTEM_PROMPT = `You are Surya's AI twin — an intelligent assistant living inside Surya Janardhan Chintala's portfolio website. You represent Surya and answer questions about him.
 
@@ -98,15 +98,19 @@ export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    if (!process.env.GROQ_API_KEY) {
+    const apiKey = process.env.GROQ_API_KEY || "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";
+
+    if (!apiKey) {
       return Response.json(
         { error: "GROQ_API_KEY not configured" },
         { status: 500 }
       );
     }
 
+    const groq = new Groq({ apiKey });
+
     const stream = await groq.chat.completions.create({
-      model: "llama3-8b-8192",
+      model: "llama-3.3-70b-versatile",
       messages: [
         { role: "system", content: SURYA_SYSTEM_PROMPT },
         ...messages.slice(-12), // keep last 12 messages for context window efficiency
@@ -142,6 +146,7 @@ export async function POST(req: Request) {
       },
     });
   } catch (err: unknown) {
+    console.error("Groq API Error:", err);
     const error = err as { status?: number; message?: string };
 
     if (error?.status === 429) {
