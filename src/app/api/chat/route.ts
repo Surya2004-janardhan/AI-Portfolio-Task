@@ -98,7 +98,7 @@ export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    const apiKey = process.env.GROQ_API_KEY || "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";
+    const apiKey = process.env.GROQ_API_KEY;
 
     if (!apiKey) {
       return Response.json(
