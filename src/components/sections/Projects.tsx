@@ -68,7 +68,7 @@ function CarouselCard({
             {project.image && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={project.image}
+                src={process.env.NODE_ENV === "production" ? `/Surya-Janardhan${project.image}` : project.image}
                 alt={`${project.title} preview`}
                 className="w-full h-full object-cover"
                 loading="lazy"

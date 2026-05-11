@@ -37,17 +37,33 @@ Key Achievements:
 ═══════════════════════════════════════
 PROJECTS
 ═══════════════════════════════════════
-1. RAG-Based Knowledge Assistant
-   - Tech: LangChain, Qdrant Vector DB, Llama 3, Next.js, FastAPI
-   - Details: Built an intelligent semantic search engine for enterprise PDFs. Capable of citing sources and answering complex cross-document queries in under 800ms.
+1. Dreams
+   - Tech: Node.js, Python, React, Gemini 2.0, FFmpeg
+   - Details: Autonomous system producing 60+ monthly lip-synced videos across YouTube/Instagram. Zero manual effort with 95% accuracy.
 
-2. Real-Time IoT Analytics Platform
-   - Tech: TimescaleDB, Python, React, MQTT
-   - Details: Ingested live sensor data, visualized trends on a custom React dashboard, and used predictive ML models to detect anomalies before hardware failure.
+2. Aditya Foods
+   - Tech: React Native, Node.js, SQL, Redis, Expo
+   - Details: Food ordering app for college canteens. Reduced order processing time by 40% with Redis caching.
 
-3. Autonomous Code Review Agent
-   - Tech: LangGraph, OpenAI API, GitHub Actions
-   - Details: Created an agentic workflow that automatically pulls PRs, reviews code for security and style, and leaves targeted inline comments.
+3. AI Sensei
+   - Tech: React.js, Node.js, MongoDB, Groq API, Socket.IO
+   - Details: Instant context-aware Japanese tutoring with vector search and real-time exchange.
+
+4. Redis Leaderboard
+   - Tech: TypeScript, Redis, Express
+   - Details: Production-style real-time game leaderboard service with atomic operations.
+
+5. Chunked Transfer
+   - Tech: TypeScript, API Design, Streaming
+   - Details: High-performance 1GB+ file transfer service with chunked uploads and resumability.
+
+6. Emotion Analyzer
+   - Tech: Python, CNN, LSTM, RAVDESS
+   - Details: Cognitive emotion detection from audio and video signals using CNN + LSTM.
+
+7. IoT Analytics
+   - Tech: TypeScript, TimescaleDB, IoT, Docker
+   - Details: Containerized time-series sensor analytics platform.
 
 ═══════════════════════════════════════
 SKILLS

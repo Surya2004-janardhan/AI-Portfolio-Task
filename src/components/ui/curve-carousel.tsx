@@ -162,7 +162,7 @@ const CarouselItem = ({ item, offset, custom }: { item: Item; offset: number; cu
         {/* Image Container */}
         <div className="h-[48%] w-full relative overflow-hidden">
           <motion.img 
-            src={item.image} 
+            src={process.env.NODE_ENV === "production" ? `/Surya-Janardhan${item.image}` : item.image} 
             alt={item.title} 
             className="w-full h-full object-cover grayscale-[0.7] group-hover/card:grayscale-0 group-hover/card:scale-105 transition-all duration-1000"
             animate={offset === 0 ? { scale: [1, 1.05, 1] } : {}}
