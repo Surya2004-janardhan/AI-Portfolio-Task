@@ -1,175 +1,275 @@
 "use client";
 
-import { motion, useScroll, useTransform, useInView, useMotionValue, useSpring } from "framer-motion";
-import { GraduationCap, Briefcase, Code2 } from "lucide-react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useInView,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
+import { Briefcase, GraduationCap, Code2, TrendingUp, Layers } from "lucide-react";
 import { useRef, useEffect } from "react";
+import { TextReveal } from "@/components/ui/text-reveal";
+import { personalInfo, stats, experience, education } from "@/lib/data";
 
-// Animated counter that counts up when in view
+/** Spring counter that counts up on scroll into view */
 function AnimatedCounter({ value, suffix = "", decimals = 0 }: { value: number; suffix?: string; decimals?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const motionValue = useMotionValue(0);
-  const springValue = useSpring(motionValue, { stiffness: 50, damping: 20 });
-  const isInView = useInView(ref, { once: true });
+  const mv   = useMotionValue(0);
+  const sv   = useSpring(mv, { stiffness: 40, damping: 20 });
+  const inV  = useInView(ref, { once: true, margin: "-10% 0px" });
 
-  useEffect(() => {
-    if (isInView) {
-      motionValue.set(value);
-    }
-  }, [isInView, motionValue, value]);
-
-  useEffect(() => {
-    const unsubscribe = springValue.on("change", (latest) => {
-      if (ref.current) {
-        ref.current.textContent = latest.toFixed(decimals) + suffix;
-      }
-    });
-    return unsubscribe;
-  }, [springValue, suffix, decimals]);
+  useEffect(() => { if (inV) mv.set(value); }, [inV, mv, value]);
+  useEffect(() => sv.on("change", (v) => { if (ref.current) ref.current.textContent = v.toFixed(decimals) + suffix; }), [sv, suffix, decimals]);
 
   return <span ref={ref}>0{suffix}</span>;
 }
 
-const cards = [
-  {
-    icon: GraduationCap,
-    title: "Education",
-    stat: 8.5,
-    statSuffix: "",
-    decimals: 1,
-    statLabel: "CGPA / 10",
-    description: "B.Tech in AI & ML — Aditya College of Engineering",
-    highlights: ["Artificial Intelligence", "Machine Learning", "Data Structures"],
-  },
-  {
-    icon: Briefcase,
-    title: "Experience",
-    stat: 20,
-    statSuffix: "+",
-    decimals: 0,
-    statLabel: "AI AGENTS DEPLOYED",
-    description: "AI Intern at GrowStack.ai — Production RAG Pipelines",
-    highlights: ["LangChain", "RAG Pipelines", "70% Effort Reduction"],
-    featured: true,
-  },
-  {
-    icon: Code2,
-    title: "Problem Solving",
-    stat: 800,
-    statSuffix: "+",
-    decimals: 0,
-    statLabel: "PROBLEMS SOLVED",
-    description: "Algorithmic mastery across competitive platforms",
-    highlights: ["Algorithms", "Data Structures", "System Design"],
-  },
-];
+const ease = [0.16, 1, 0.3, 1] as const;
+
+/** Animated stat icon that pulses */
+const statIcons = [TrendingUp, Bot, GraduationCap, Layers];
+function Bot({ size }: { size: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="8" width="18" height="12" rx="2" /><path d="M12 8V4m-4 4V4m8 4V4M8 12h.01M16 12h.01M12 16h.01" />
+    </svg>
+  );
+}
 
 export default function About() {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start end", "end start"] });
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
 
-  const card0Rotate = useTransform(scrollYProgress, [0.1, 0.5], [-12, 0]);
-  const card0X = useTransform(scrollYProgress, [0.1, 0.5], [-60, 0]);
-  const card1Y = useTransform(scrollYProgress, [0.1, 0.5], [50, 0]);
-  const card2Rotate = useTransform(scrollYProgress, [0.1, 0.5], [12, 0]);
-  const card2X = useTransform(scrollYProgress, [0.1, 0.5], [60, 0]);
-
-  const cardTransforms = [
-    { rotate: card0Rotate, x: card0X, y: 0 },
-    { rotate: 0, x: 0, y: card1Y },
-    { rotate: card2Rotate, x: card2X, y: 0 },
-  ];
+  const ghostY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const lineH  = useTransform(scrollYProgress, [0.1, 0.55], ["0%", "100%"]);
 
   return (
-    <section ref={containerRef} id="about" className="py-32 relative z-10 bg-[#060606] overflow-hidden">
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-        <span className="text-[15vw] font-black text-white/[0.02] tracking-tighter whitespace-nowrap">ABOUT ME</span>
-      </div>
+    <section ref={sectionRef} id="about" className="py-24 md:py-40 relative z-10 overflow-hidden noise" aria-label="About me">
+      {/* Ghost watermark parallax */}
+      <motion.div className="absolute top-16 left-0 right-0 pointer-events-none select-none overflow-hidden text-center"
+        style={{ y: ghostY }} aria-hidden="true">
+        <span className="text-[15vw] font-black tracking-tighter whitespace-nowrap heading-display"
+          style={{ color: "hsl(var(--foreground) / 0.012)" }}>ABOUT</span>
+      </motion.div>
 
-      <div className="container px-6 mx-auto relative z-10">
-        <motion.div
-          className="mb-20 max-w-3xl"
-          initial={{ opacity: 0, x: -60 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, type: "spring" }}
+      <div className="layout-grid relative z-10">
+        {/* Header */}
+        <motion.div className="grid-col-half mb-16 md:mb-24"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 1.2, ease }}
         >
-          <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-6">
-            Bridging AI <span className="text-primary">&</span> Engineering
+          <span className="section-label mb-4 block">About Me</span>
+          <h2 className="text-fluid-h2 heading-display mb-4">
+            Bridging AI <span style={{ color: "hsl(var(--primary))" }}>&</span> Engineering
           </h2>
-          <p className="text-white/60 text-lg md:text-xl leading-relaxed">
-            I build things end-to-end — from schema design to deployment. Specializing in 
-            intelligent systems that solve real problems at scale.
-          </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto" style={{ perspective: 1200 }}>
-          {cards.map((card, i) => (
-            <motion.div
-              key={card.title}
-              style={{
-                rotate: cardTransforms[i].rotate,
-                x: cardTransforms[i].x,
-                y: cardTransforms[i].y,
-              }}
-              initial={{ opacity: 0, y: 100, rotateX: -20 }}
-              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.7, delay: i * 0.15, type: "spring", stiffness: 70 }}
-              whileHover={{ y: -16, scale: 1.02, transition: { duration: 0.3 } }}
-              className={`relative rounded-3xl overflow-hidden cursor-default group
-                ${card.featured 
-                  ? 'bg-gradient-to-br from-primary/[0.12] via-primary/[0.04] to-transparent border-2 border-primary/30 hover:border-primary' 
-                  : 'bg-white/[0.03] border border-white/[0.06] hover:border-primary/40'
-                } transition-colors duration-300`}
-            >
-              {/* Large stat number as background */}
-              <div className="absolute top-4 right-4 pointer-events-none select-none">
-                <span className={`text-6xl md:text-7xl font-black leading-none ${card.featured ? 'text-primary/[0.08]' : 'text-white/[0.04]'}`}>
-                  <AnimatedCounter value={card.stat} suffix={card.statSuffix} decimals={card.decimals} />
-                </span>
-              </div>
+        {/* Bio — scroll-linked word reveal */}
+        <div className="col-span-4 md:col-span-8 lg:col-span-10 lg:col-start-2 mb-20 md:mb-32">
+          <TextReveal text={personalInfo.bio} />
+        </div>
 
-              {/* Diagonal accent stripe */}
-              <div className={`absolute -top-10 -right-10 w-40 h-40 rotate-45 ${card.featured ? 'bg-primary/[0.06]' : 'bg-white/[0.02]'} pointer-events-none`} />
-
-              <div className="p-8 relative z-10">
+        {/* Stats strip — glaze cards with float animation */}
+        <div className="grid-col-full grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-20 md:mb-32 max-w-5xl mx-auto w-full">
+          {stats.map((stat, i) => {
+            const Icon = statIcons[i % statIcons.length];
+            return (
+              <motion.div key={stat.label}
+                className="glaze-card glow-border-anim relative p-6 md:p-8 rounded-2xl border cursor-default"
+                style={{ background: "hsl(var(--surface-1) / 0.5)", borderColor: "hsl(var(--border))" }}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.8, ease, delay: i * 0.1 }}
+                whileHover={{ y: -6, borderColor: "hsl(var(--primary) / 0.35)" }}
+              >
+                {/* Animated corner accent */}
                 <motion.div
-                  className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 ${card.featured ? 'bg-primary/20' : 'bg-white/[0.06]'}`}
-                  whileHover={{ rotate: 360, scale: 1.15 }}
-                  transition={{ duration: 0.5 }}
+                  className="absolute top-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{ background: "hsl(var(--primary) / 0.08)", color: "hsl(var(--primary) / 0.4)" }}
+                  animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 0.95, 1] }}
+                  transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <card.icon size={28} className={card.featured ? "text-primary" : "text-white/70"} />
+                  <Icon size={14} aria-hidden="true" />
                 </motion.div>
 
-                <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors">{card.title}</h3>
-                <p className="text-white/50 text-sm mb-6">{card.description}</p>
-
-                {/* Stat label */}
-                <div className="mb-6">
-                  <span className={`text-3xl font-black ${card.featured ? 'text-primary' : 'text-white'}`}>
-                    <AnimatedCounter value={card.stat} suffix={card.statSuffix} decimals={card.decimals} />
-                  </span>
-                  <span className="text-white/40 text-xs font-mono uppercase tracking-wider ml-2">{card.statLabel}</span>
+                <div className="text-4xl md:text-5xl font-black heading-display mb-2 transition-colors duration-300"
+                  style={{ color: "hsl(var(--foreground))" }}>
+                  <AnimatedCounter value={stat.value} suffix={stat.suffix} decimals={stat.decimals || 0} />
                 </div>
+                <span className="text-[10px] md:text-xs font-mono uppercase tracking-[0.22em]"
+                  style={{ color: "hsl(var(--muted-foreground))" }}>
+                  {stat.label}
+                </span>
 
-                {/* Highlight tags */}
-                <div className="flex flex-wrap gap-2">
-                  {card.highlights.map((h) => (
-                    <span
-                      key={h}
-                      className={`text-[11px] font-mono px-3 py-1 rounded-full 
-                        ${card.featured 
-                          ? 'bg-primary/10 text-primary/80 border border-primary/20' 
-                          : 'bg-white/[0.04] text-white/50 border border-white/[0.06]'
-                        } group-hover:border-primary/30 transition-colors`}
-                    >
-                      {h}
-                    </span>
-                  ))}
-                </div>
+                {/* Bottom amber accent bar — grows in */}
+                <motion.div
+                  className="absolute bottom-0 left-0 right-0 h-px"
+                  style={{ background: "hsl(var(--primary) / 0.3)", transformOrigin: "left" }}
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, ease, delay: 0.3 + i * 0.1 }}
+                />
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Bento grid */}
+        <div className="grid-col-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-8">
+
+          {/* Experience card — 3-col, with live progress line */}
+          <motion.div
+            className="glaze-card glow-border-anim md:col-span-2 lg:col-span-3 relative p-8 md:p-10 rounded-3xl border"
+            style={{ background: "hsl(var(--surface-1) / 0.4)", borderColor: "hsl(var(--border))" }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 1, ease }}
+            whileHover={{ y: -4 }}
+          >
+            {/* Scroll-driven connector line */}
+            <div className="absolute top-0 left-10 w-px h-full overflow-hidden hidden md:block" aria-hidden="true">
+              <motion.div className="w-full" style={{
+                height: lineH,
+                background: "linear-gradient(to bottom, hsl(var(--primary) / 0.6), hsl(var(--primary) / 0.2), transparent)",
+              }} />
+            </div>
+
+            {/* Header row */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8 md:pl-8">
+              <motion.div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: "hsl(var(--primary) / 0.1)", border: "1px solid hsl(var(--primary) / 0.2)" }}
+                animate={{ boxShadow: ["0 0 0px hsl(var(--primary) / 0)", "0 0 16px hsl(var(--primary) / 0.3)", "0 0 0px hsl(var(--primary) / 0)"] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
+                <Briefcase size={22} style={{ color: "hsl(var(--primary))" }} aria-hidden="true" />
+              </motion.div>
+              <div>
+                <h3 className="text-lg md:text-xl font-bold" style={{ color: "hsl(var(--foreground))" }}>{experience.title}</h3>
+                <p className="text-sm" style={{ color: "hsl(var(--muted-foreground))" }}>{experience.company}</p>
               </div>
-            </motion.div>
-          ))}
+              <div className="sm:ml-auto">
+                <span className="text-[10px] font-mono px-3 py-1.5 rounded-full border"
+                  style={{ background: "hsl(var(--primary) / 0.08)", color: "hsl(var(--primary) / 0.9)", borderColor: "hsl(var(--primary) / 0.2)" }}>
+                  {experience.period}
+                </span>
+              </div>
+            </div>
+
+            <ul className="space-y-4 md:pl-8">
+              {experience.highlights.map((h, i) => (
+                <motion.li key={i} className="text-sm md:text-base leading-relaxed flex gap-4"
+                  style={{ color: "hsl(var(--foreground) / 0.55)" }}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, ease, delay: 0.2 + i * 0.12 }}
+                >
+                  <span className="mt-1 shrink-0" style={{ color: "hsl(var(--primary) / 0.6)" }} aria-hidden="true">▸</span>
+                  {h}
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Education card — 2-col */}
+          <motion.div
+            className="glaze-card glow-border-anim md:col-span-1 lg:col-span-2 h-full p-8 md:p-10 rounded-3xl border flex flex-col justify-between"
+            style={{ background: "hsl(var(--surface-1) / 0.4)", borderColor: "hsl(var(--border))" }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 1, ease, delay: 0.1 }}
+            whileHover={{ y: -4 }}
+          >
+            <div>
+              <div className="flex items-center gap-4 mb-8">
+                <motion.div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ background: "hsl(var(--cyan) / 0.08)", border: "1px solid hsl(var(--cyan) / 0.15)" }}
+                  animate={{ rotate: [0, 5, -5, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <GraduationCap size={22} style={{ color: "hsl(var(--cyan))" }} aria-hidden="true" />
+                </motion.div>
+                <h3 className="text-lg md:text-xl font-bold" style={{ color: "hsl(var(--foreground))" }}>Education</h3>
+              </div>
+              <p className="text-base mb-2 font-medium" style={{ color: "hsl(var(--foreground) / 0.85)" }}>{education.degree}</p>
+              <p className="text-sm mb-8" style={{ color: "hsl(var(--muted-foreground))" }}>{education.institution}</p>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-5xl font-black heading-display text-glow-cyan" style={{ color: "hsl(var(--cyan))" }}>
+                <AnimatedCounter value={8.5} suffix="" decimals={1} />
+              </span>
+              <span className="text-[10px] font-mono uppercase tracking-[0.22em]" style={{ color: "hsl(var(--muted-foreground))" }}>/ 10 CGPA</span>
+            </div>
+          </motion.div>
+
+          {/* Problem Solving — 2-col */}
+          <motion.div
+            className="glaze-card glow-border-anim md:col-span-1 lg:col-span-2 h-full p-8 md:p-10 rounded-3xl border flex flex-col justify-between"
+            style={{ background: "hsl(var(--surface-1) / 0.4)", borderColor: "hsl(var(--border))" }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 1, ease, delay: 0.2 }}
+            whileHover={{ y: -4 }}
+          >
+            <div>
+              <div className="flex items-center gap-4 mb-8">
+                <motion.div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ background: "hsl(var(--surface-2))", border: "1px solid hsl(var(--border-bright))" }}
+                  animate={{ scale: [1, 1.08, 1] }}
+                  transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Code2 size={22} style={{ color: "hsl(var(--foreground) / 0.7)" }} aria-hidden="true" />
+                </motion.div>
+                <h3 className="text-lg md:text-xl font-bold" style={{ color: "hsl(var(--foreground))" }}>Problem Solving</h3>
+              </div>
+              <p className="text-sm mb-8" style={{ color: "hsl(var(--muted-foreground))" }}>Algorithmic mastery across competitive platforms</p>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-5xl font-black heading-display" style={{ color: "hsl(var(--foreground))" }}>
+                <AnimatedCounter value={800} suffix="+" decimals={0} />
+              </span>
+              <span className="text-[10px] font-mono uppercase tracking-[0.22em]" style={{ color: "hsl(var(--muted-foreground))" }}>Solved</span>
+            </div>
+          </motion.div>
+
+          {/* Core tech cloud — 3-col, animated tags */}
+          <motion.div
+            className="glaze-card glow-border-anim md:col-span-2 lg:col-span-3 h-full p-8 md:p-10 rounded-3xl border"
+            style={{ background: "linear-gradient(135deg, hsl(var(--primary) / 0.06), hsl(var(--surface-1) / 0.3))", borderColor: "hsl(var(--primary) / 0.12)" }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 1, ease, delay: 0.3 }}
+            whileHover={{ y: -4 }}
+          >
+            <div className="flex flex-wrap gap-2 md:gap-3">
+              {["LangChain", "RAG Pipelines", "AI Agents", "Node.js", "React", "Docker", "Redis", "PostgreSQL"].map((tag, i) => (
+                <motion.span key={tag}
+                  className="text-[10px] md:text-[11px] font-mono px-3 md:px-4 py-2 rounded-full border uppercase tracking-wider"
+                  style={{ background: "hsl(var(--primary) / 0.05)", color: "hsl(var(--primary) / 0.75)", borderColor: "hsl(var(--primary) / 0.12)" }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.06 }}
+                  whileHover={{ scale: 1.08, background: "hsl(var(--primary) / 0.15)" }}
+                >
+                  {tag}
+                </motion.span>
+              ))}
+            </div>
+            <p className="text-xs md:text-sm mt-8 font-mono tracking-widest uppercase" style={{ color: "hsl(var(--muted-foreground) / 0.5)" }}>
+              Core Technical Stack
+            </p>
+          </motion.div>
         </div>
       </div>
     </section>

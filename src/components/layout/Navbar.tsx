@@ -1,58 +1,27 @@
 "use client";
 
 import { FloatingDock } from "@/components/ui/floating-dock";
-import { 
-  Home, 
-  User, 
-  Cpu, 
-  Briefcase, 
-  Mail
-} from "lucide-react";
-import { motion } from "framer-motion";
+import { Home, User, Cpu, Briefcase, Mail, Bot } from "lucide-react";
+
+const navLinks = [
+  { title: "Home",     href: "#home",        icon: <Home className="h-full w-full" /> },
+  { title: "About",    href: "#about",       icon: <User className="h-full w-full" /> },
+  { title: "Skills",   href: "#skills",      icon: <Cpu className="h-full w-full" /> },
+  { title: "Projects", href: "#projects",    icon: <Briefcase className="h-full w-full" /> },
+  { title: "Contact",  href: "#contact",     icon: <Mail className="h-full w-full" /> },
+  { title: "AI Chat",  href: "#ai-terminal", icon: <Bot className="h-full w-full" /> },
+];
 
 export default function Navbar() {
-  const links = [
-    {
-      title: "Home",
-      icon: <Home className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-      href: "#",
-    },
-    {
-      title: "About",
-      icon: <User className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-      href: "#about",
-    },
-    {
-      title: "Skills",
-      icon: <Cpu className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-      href: "#skills",
-    },
-    {
-      title: "Projects",
-      icon: <Briefcase className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-      href: "#projects",
-    },
-    {
-      title: "Contact",
-      icon: <Mail className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-      href: "#contact",
-    },
-  ];
-
   return (
-    <motion.div 
-      className="fixed bottom-6 left-0 right-0 z-50 flex justify-center items-center pointer-events-none"
-      initial={{ y: 100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, delay: 1, type: "spring", stiffness: 100 }}
-    >
-      <div className="pointer-events-auto">
-        <FloatingDock
-          items={links}
-          desktopClassName="bg-black/20 backdrop-blur-2xl border-white/10 px-6 py-4 rounded-[2rem]"
-          mobileClassName="bg-black/20 backdrop-blur-2xl border-white/10"
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] pointer-events-none">
+      <div className="pointer-events-auto flex items-center justify-center">
+        <FloatingDock 
+          items={navLinks} 
+          desktopClassName="bg-[hsl(222_35%_7%/0.65)] backdrop-blur-2xl border-white/10 shadow-2xl glaze-card"
+          mobileClassName="bg-[hsl(222_35%_7%/0.85)] border-white/10"
         />
       </div>
-    </motion.div>
+    </div>
   );
 }

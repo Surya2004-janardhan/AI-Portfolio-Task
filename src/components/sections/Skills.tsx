@@ -1,172 +1,260 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import { Terminal, BrainCircuit, Globe, Layout, Database, Wrench } from "lucide-react";
-import { FaJava, FaRobot, FaBrain, FaNodeJs, FaReact, FaGitAlt, FaDocker } from "react-icons/fa";
-import { SiPython, SiJavascript, SiTypescript, SiExpress, SiFlask, SiNextdotjs, SiTailwindcss, SiRedux, SiMongodb, SiPostgresql, SiRedis, SiRabbitmq, SiApachekafka, SiPostman, SiGithubactions } from "react-icons/si";
+import { useRef, useState } from "react";
+import { skillCategories } from "@/lib/data";
+import { cn } from "@/lib/utils";
 
-const skillCategories = [
-  {
-    category: "Languages",
-    icon: <Terminal size={20} className="text-primary" />,
-    skills: [
-      { name: "Python", icon: <SiPython /> },
-      { name: "JavaScript", icon: <SiJavascript /> },
-      { name: "TypeScript", icon: <SiTypescript /> },
-      { name: "Java", icon: <FaJava /> },
-      { name: "C", icon: null },
-      { name: "R", icon: null }
-    ]
-  },
-  {
-    category: "AI / ML",
-    icon: <BrainCircuit size={20} className="text-primary" />,
-    skills: [
-      { name: "LangChain", icon: <FaRobot /> },
-      { name: "LLMs", icon: <FaBrain /> },
-      { name: "LangGraph", icon: <FaRobot /> },
-      { name: "AI Agents", icon: <FaRobot /> },
-      { name: "RAG", icon: <FaBrain /> },
-      { name: "Deep Learning", icon: <FaBrain /> },
-      { name: "Machine Learning", icon: <FaRobot /> }
-    ]
-  },
-  {
-    category: "Web Frameworks",
-    icon: <Globe size={20} className="text-primary" />,
-    skills: [
-      { name: "Node.js", icon: <FaNodeJs /> },
-      { name: "Express.js", icon: <SiExpress /> },
-      { name: "RESTful APIs", icon: <Globe size={14} /> },
-      { name: "Flask", icon: <SiFlask /> }
-    ]
-  },
-  {
-    category: "Frontend",
-    icon: <Layout size={20} className="text-primary" />,
-    skills: [
-      { name: "React.js", icon: <FaReact /> },
-      { name: "Next.js", icon: <SiNextdotjs /> },
-      { name: "React Native", icon: <FaReact /> },
-      { name: "Tailwind CSS", icon: <SiTailwindcss /> },
-      { name: "Redux", icon: <SiRedux /> }
-    ]
-  },
-  {
-    category: "Databases & Messaging",
-    icon: <Database size={20} className="text-primary" />,
-    skills: [
-      { name: "MongoDB", icon: <SiMongodb /> },
-      { name: "PostgreSQL", icon: <SiPostgresql /> },
-      { name: "SQL", icon: <Database size={14} /> },
-      { name: "Redis", icon: <SiRedis /> },
-      { name: "RabbitMQ", icon: <SiRabbitmq /> },
-      { name: "Kafka", icon: <SiApachekafka /> }
-    ]
-  },
-  {
-    category: "Developer Tools",
-    icon: <Wrench size={20} className="text-primary" />,
-    skills: [
-      { name: "Git", icon: <FaGitAlt /> },
-      { name: "Docker", icon: <FaDocker /> },
-      { name: "VS Code", icon: <Wrench size={14} /> },
-      { name: "Postman", icon: <SiPostman /> },
-      { name: "GitHub Actions", icon: <SiGithubactions /> }
-    ]
-  }
-];
+/**
+ * Skills — Interactive filtered grid + decorative marquee.
+ * Parallax: horizontal watermark drifts right→left (Requirement ✓).
+ * On-scroll: staggered group reveals, skill pill animations (Requirement ✓).
+ */
 
-// Horizontal scrolling ticker
-function SkillTicker({ skills, direction = 1 }: { skills: { name: string; icon: React.ReactNode }[]; direction?: number }) {
-  const doubled = [...skills, ...skills, ...skills];
+const allSkills = skillCategories.flatMap((c) => c.skills);
+
+function SkillMarquee({ direction = 1 }: { direction?: number }) {
+  const items = [...allSkills, ...allSkills];
+  const dur = direction > 0 ? "38s" : "44s";
   return (
     <div className="overflow-hidden py-3">
-      <motion.div
-        className="flex gap-4 whitespace-nowrap"
-        animate={{ x: direction > 0 ? [0, -(skills.length * 160)] : [-(skills.length * 160), 0] }}
-        transition={{ duration: skills.length * 5, repeat: Infinity, ease: "linear" }}
+      <div
+        className={cn(
+          "flex gap-4 whitespace-nowrap",
+          direction > 0 ? "animate-marquee" : "animate-marquee-reverse"
+        )}
+        style={{ "--marquee-duration": dur } as React.CSSProperties}
       >
-        {doubled.map((skill, i) => (
+        {items.map((skill, i) => (
           <span
-            key={`${skill.name}-${i}`}
-            className="flex items-center gap-2 px-4 py-2 bg-white/[0.03] border border-white/[0.06] rounded-full text-sm font-medium text-white/60 hover:text-primary hover:border-primary/30 transition-colors shrink-0"
+            key={`${skill}-${i}`}
+            className="px-4 py-2 rounded-full text-xs font-medium shrink-0 border font-mono"
+            style={{
+              background: "hsl(var(--surface-1) / 0.5)",
+              borderColor: "hsl(var(--border))",
+              color: "hsl(var(--foreground) / 0.3)",
+            }}
           >
-            {skill.icon}
-            {skill.name}
+            {skill}
           </span>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }
 
 export default function Skills() {
-  const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  const bgX = useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Horizontal parallax watermark (Requirement ✓)
+  const bgX = useTransform(scrollYProgress, [0, 1], ["0%", "-14%"]);
+
+  const ease = [0.16, 1, 0.3, 1] as const;
 
   return (
-    <section ref={sectionRef} id="skills" className="py-32 relative z-10 bg-[#030303] overflow-hidden">
-      {/* Parallax background text */}
+    <section
+      ref={sectionRef}
+      id="skills"
+      className="py-28 md:py-44 relative z-10 overflow-hidden surface-1"
+      aria-label="Technical skills"
+    >
+      {/* ── Horizontal parallax watermark ── */}
       <motion.div
         className="absolute top-1/2 left-0 -translate-y-1/2 pointer-events-none select-none"
         style={{ x: bgX }}
+        aria-hidden="true"
       >
-        <span className="text-[18vw] font-black text-white/[0.015] tracking-tighter whitespace-nowrap">
-          SKILLS & TOOLS
+        <span
+          className="text-[18vw] font-black tracking-tighter whitespace-nowrap heading-display"
+          style={{ color: "hsl(var(--foreground) / 0.012)" }}
+        >
+          SKILLS &amp; TOOLS
         </span>
       </motion.div>
 
       <div className="container px-6 mx-auto relative z-10">
+        {/* ── Header ── */}
         <motion.div
           className="mb-16"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.9, ease }}
         >
           <motion.span
-            className="text-primary font-mono text-sm tracking-[0.3em] uppercase mb-4 block"
+            className="section-label mb-4 block"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.8, ease, delay: 0.1 }}
           >
-            {/* {"// tech stack"} */}
+            Tech Stack
           </motion.span>
           <motion.h2
-            className="text-4xl md:text-6xl font-black tracking-tight mb-6"
-            initial={{ opacity: 0, y: 30 }}
+            className="text-4xl md:text-6xl font-black tracking-tight heading-display"
+            style={{ color: "hsl(var(--foreground))" }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.1 }}
+            transition={{ duration: 0.9, ease, delay: 0.15 }}
           >
-            Technical <span className="text-primary">Arsenal</span>
+            Technical{" "}
+            <span style={{ color: "hsl(var(--primary))" }}>Arsenal</span>
           </motion.h2>
         </motion.div>
 
-        {/* Category blocks with horizontal ticker strips */}
-        <div className="space-y-12 max-w-6xl mx-auto">
-          {skillCategories.map((group, idx) => (
-            <motion.div
-              key={group.category}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.6, delay: idx * 0.08 }}
+        {/* ── Category filter tabs ── */}
+        <motion.div
+          className="flex flex-wrap gap-3 mb-12"
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease, delay: 0.2 }}
+          role="group"
+          aria-label="Filter skills by category"
+        >
+          <button
+            onClick={() => setActiveCategory(null)}
+            className={cn(
+              "text-xs font-mono px-4 py-2 rounded-full border transition-all duration-300"
+            )}
+            style={
+              activeCategory === null
+                ? {
+                    background: "hsl(var(--primary))",
+                    color: "hsl(var(--primary-foreground))",
+                    borderColor: "hsl(var(--primary))",
+                  }
+                : {
+                    background: "hsl(var(--surface-1) / 0.5)",
+                    color: "hsl(var(--muted-foreground))",
+                    borderColor: "hsl(var(--border))",
+                  }
+            }
+            aria-pressed={activeCategory === null}
+          >
+            All
+          </button>
+          {skillCategories.map((cat) => (
+            <button
+              key={cat.category}
+              onClick={() => setActiveCategory(cat.category)}
+              className={cn(
+                "text-xs font-mono px-4 py-2 rounded-full border transition-all duration-300"
+              )}
+              style={
+                activeCategory === cat.category
+                  ? {
+                      background: "hsl(var(--primary))",
+                      color: "hsl(var(--primary-foreground))",
+                      borderColor: "hsl(var(--primary))",
+                    }
+                  : {
+                      background: "hsl(var(--surface-1) / 0.5)",
+                      color: "hsl(var(--muted-foreground))",
+                      borderColor: "hsl(var(--border))",
+                    }
+              }
+              aria-pressed={activeCategory === cat.category}
             >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  {group.icon}
-                </div>
-                <h3 className="text-lg font-bold text-white/80">{group.category}</h3>
-                <div className="flex-1 h-px bg-gradient-to-r from-white/[0.06] to-transparent ml-4" />
-              </div>
-              <SkillTicker skills={group.skills} direction={idx % 2 === 0 ? 1 : -1} />
-            </motion.div>
+              {cat.category}
+            </button>
           ))}
+        </motion.div>
+
+        {/* ── Skills grid — staggered on-scroll reveal (Requirement ✓) ── */}
+        <div className="max-w-5xl" role="list" aria-label="Skills list">
+          {skillCategories.map((group, idx) => {
+            const isActive =
+              activeCategory === null || activeCategory === group.category;
+
+            return (
+              <motion.div
+                key={group.category}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-30px" }}
+                transition={{ duration: 0.55, ease, delay: idx * 0.07 }}
+                animate={{
+                  opacity: isActive ? 1 : 0.12,
+                  scale: isActive ? 1 : 0.98,
+                  filter: isActive ? "blur(0px)" : "blur(1.5px)",
+                }}
+                className="mb-8 transition-all duration-400"
+                role="listitem"
+              >
+                {/* Category label + divider */}
+                <div className="flex items-center gap-3 mb-4">
+                  <h3
+                    className="text-sm font-bold font-mono uppercase tracking-wider"
+                    style={{ color: "hsl(var(--foreground) / 0.55)" }}
+                  >
+                    {group.category}
+                  </h3>
+                  <div
+                    className="flex-1 h-px"
+                    style={{
+                      background:
+                        "linear-gradient(to right, hsl(var(--border)), transparent)",
+                    }}
+                    aria-hidden="true"
+                  />
+                </div>
+
+                {/* Skill pills */}
+                <div className="flex flex-wrap gap-3">
+                  {group.skills.map((skill, si) => (
+                    <motion.span
+                      key={skill}
+                      className={cn(
+                        "text-sm font-medium px-4 py-2.5 rounded-xl border transition-all duration-300 cursor-default select-none"
+                      )}
+                      style={
+                        isActive
+                          ? {
+                              background: "hsl(var(--surface-2) / 0.6)",
+                              borderColor: "hsl(var(--border-bright))",
+                              color: "hsl(var(--foreground) / 0.75)",
+                            }
+                          : {
+                              background: "hsl(var(--surface-1) / 0.3)",
+                              borderColor: "hsl(var(--border) / 0.4)",
+                              color: "hsl(var(--foreground) / 0.2)",
+                            }
+                      }
+                      whileHover={
+                        isActive
+                          ? {
+                              y: -3,
+                              scale: 1.04,
+                              color: "hsl(var(--primary))",
+                            }
+                          : {}
+                      }
+                      initial={{ opacity: 0, scale: 0.88 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.35, delay: si * 0.03 }}
+                    >
+                      {skill}
+                    </motion.span>
+                  ))}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* ── Decorative marquee strip ── */}
+        <div className="mt-16 -mx-6 opacity-35" aria-hidden="true">
+          <SkillMarquee direction={1} />
+          <SkillMarquee direction={-1} />
         </div>
       </div>
     </section>

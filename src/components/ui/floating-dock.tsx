@@ -141,11 +141,11 @@ function IconContainer({
     return val - bounds.x - bounds.width / 2;
   });
 
-  let widthTransform = useTransform(distance, [-150, 0, 150], [50, 100, 50]);
-  let heightTransform = useTransform(distance, [-150, 0, 150], [50, 100, 50]);
+  let widthTransform = useTransform(distance, [-150, 0, 150], [48, 58, 48]);
+  let heightTransform = useTransform(distance, [-150, 0, 150], [48, 58, 48]);
 
-  let widthIconTransform = useTransform(distance, [-150, 0, 150], [24, 48, 24]);
-  let heightIconTransform = useTransform(distance, [-150, 0, 150], [24, 48, 24]);
+  let widthIconTransform = useTransform(distance, [-150, 0, 150], [24, 29, 24]);
+  let heightIconTransform = useTransform(distance, [-150, 0, 150], [24, 29, 24]);
 
   let width = useSpring(widthTransform, {
     mass: 0.1,
@@ -177,8 +177,12 @@ function IconContainer({
         ref={ref}
         style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        className="aspect-square rounded-[1.5rem] bg-white/[0.03] flex items-center justify-center relative border border-white/5 hover:border-white/20 transition-colors shadow-inner"
+        className="aspect-square rounded-[1.5rem] bg-white/[0.03] flex items-center justify-center relative border border-white/5 transition-all duration-300 shadow-inner group"
+        style={{
+          backgroundColor: hovered ? "hsl(var(--primary) / 0.15)" : "rgba(255,255,255,0.03)",
+          borderColor: hovered ? "hsl(var(--primary) / 0.4)" : "rgba(255,255,255,0.05)",
+          boxShadow: hovered ? "0 0 20px hsl(var(--primary)/0.2), inset 0 0 10px hsl(var(--primary)/0.1)" : "inset 0 0 0 rgba(0,0,0,0)",
+        }}
       >
         <AnimatePresence>
           {hovered && (
@@ -194,15 +198,17 @@ function IconContainer({
         </AnimatePresence>
         <motion.div
           style={{ width: widthIcon, height: heightIcon }}
-          className="flex items-center justify-center text-white/60 group-hover:text-white"
+          className="flex items-center justify-center transition-colors duration-300"
+          animate={{ color: hovered ? "hsl(var(--primary))" : "rgba(255,255,255,0.6)" }}
         >
           {icon}
         </motion.div>
         
-        {/* macOS Reflection dot */}
+        {/* macOS Reflection dot - updated to amber hover glow */}
         <motion.div 
-          className="absolute -bottom-1 w-1 h-1 bg-white/20 rounded-full"
-          animate={{ opacity: hovered ? 1 : 0.3 }}
+          className="absolute -bottom-1.5 w-6 h-1 rounded-full blur-[2px]"
+          style={{ background: hovered ? "hsl(var(--primary))" : "transparent" }}
+          animate={{ opacity: hovered ? 0.8 : 0 }}
         />
       </motion.div>
     </Link>

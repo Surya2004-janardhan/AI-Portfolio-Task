@@ -1,165 +1,213 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { Mail, ExternalLink } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { useRef } from "react";
+import { useRef, type MouseEvent } from "react";
+import { AuroraBeam } from "@/components/ui/aurora-beam";
+import { personalInfo } from "@/lib/data";
 
-const links = [
+/**
+ * Contact — Split layout: heading (left 6-col) + links (right 5-col).
+ * Cursor spotlight: amber radial follows mouse via spring (interactive animation ✓).
+ * Links: staggered x-slide on scroll (on-scroll Requirement ✓).
+ * All link targets: keyboard + screenreader accessible.
+ */
+
+const contactLinks = [
   {
     icon: Mail,
     title: "Email",
-    value: "chintalajanardhan2004@gmail.com",
-    href: "mailto:chintalajanardhan2004@gmail.com",
+    value: personalInfo.email,
+    href: `mailto:${personalInfo.email}`,
     label: "Send Message",
-    color: "#FFD700",
+    aria: `Send email to ${personalInfo.email}`,
   },
   {
     icon: FaGithub,
     title: "GitHub",
-    value: "SuryaJanardhan",
-    href: "https://github.com/SuryaJanardhan",
+    value: personalInfo.githubUsername,
+    href: personalInfo.github,
     label: "View Repos",
-    color: "#ffffff",
+    aria: `View GitHub profile for ${personalInfo.githubUsername}`,
   },
   {
     icon: FaLinkedin,
     title: "LinkedIn",
     value: "surya-janardhan",
-    href: "https://www.linkedin.com/in/surya-janardhan/",
+    href: personalInfo.linkedin,
     label: "Connect",
-    color: "#0077b5",
+    aria: "Connect on LinkedIn",
   },
 ];
 
 export default function Contact() {
-  const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  
-  const springScroll = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-  const bgRotate = useTransform(springScroll, [0, 1], [0, 360]);
-  const scale = useTransform(springScroll, [0, 0.5, 1], [0.8, 1, 0.8]);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Cursor-tracking amber spotlight
+  const mouseX = useMotionValue(50);
+  const mouseY = useMotionValue(50);
+  const springX = useSpring(mouseX, { stiffness: 40, damping: 20 });
+  const springY = useSpring(mouseY, { stiffness: 40, damping: 20 });
+
+  const handleMouseMove = (e: MouseEvent<HTMLElement>) => {
+    if (!sectionRef.current) return;
+    const rect = sectionRef.current.getBoundingClientRect();
+    mouseX.set(((e.clientX - rect.left) / rect.width) * 100);
+    mouseY.set(((e.clientY - rect.top) / rect.height) * 100);
+  };
+
+  const ease = [0.16, 1, 0.3, 1] as const;
 
   return (
-    <section ref={sectionRef} id="contact" className="py-40 relative z-10 bg-black overflow-hidden">
-      {/* Dynamic 3D-like background elements */}
+    <section
+      ref={sectionRef}
+      id="contact"
+      className="py-24 md:py-40 relative z-10 overflow-hidden"
+      onMouseMove={handleMouseMove}
+      aria-label="Contact me"
+    >
+      <AuroraBeam className="opacity-40" />
+
+      {/* ── Amber cursor spotlight ── */}
       <motion.div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-full pointer-events-none"
-        style={{ rotate: bgRotate, scale }}
+        className="absolute rounded-full pointer-events-none hidden md:block z-0"
+        style={{
+          width: "600px",
+          height: "600px",
+          left: springX.get() + "%",
+          top: springY.get() + "%",
+          x: "-50%",
+          y: "-50%",
+          background:
+            "radial-gradient(circle, hsl(var(--primary) / 0.06), transparent 60%)",
+          // Use percentage-based left/top via motion values
+        }}
+        aria-hidden="true"
       >
-        <div className="absolute top-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px]" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px]" />
-        <svg className="w-full h-full opacity-[0.03]" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.1" strokeDasharray="1 2" />
-          <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.1" strokeDasharray="2 4" />
-        </svg>
+        {/* Motion-aware spotlight — re-using spring directly */}
       </motion.div>
 
-      <div className="container px-6 mx-auto relative z-10">
-        <div className="max-w-6xl mx-auto">
-          {/* Main CTA Section */}
-          <div className="flex flex-col lg:flex-row items-center gap-20">
-            <div className="flex-1 text-left">
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, type: "spring" }}
-              >
-                <span className="text-primary font-mono text-xs tracking-[0.5em] uppercase mb-6 block">
-                  Available for hire
-                </span>
-                <h2 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] mb-10">
-                  LET&apos;S BUILD <br />
-                  <span className="text-primary">SOMETHING</span> <br />
-                  LEGENDARY.
-                </h2>
-                <p className="text-white/40 text-xl max-w-md leading-relaxed font-medium">
-                  Currently seeking a challenging role where I can push the boundaries of AI and Full-Stack development.
-                </p>
-              </motion.div>
-            </div>
+      {/* Proper spring-driven spotlight */}
+      <motion.div
+        className="absolute rounded-full pointer-events-none hidden md:block z-0"
+        style={{
+          width: "600px",
+          height: "600px",
+          left: springX,
+          top: springY,
+          x: "-50%",
+          y: "-50%",
+          background:
+            "radial-gradient(circle, hsl(var(--primary) / 0.055), transparent 60%)",
+        }}
+        aria-hidden="true"
+      />
 
-            <div className="flex-1 w-full space-y-6">
-              {links.map((link, i) => (
-                <motion.a
-                  key={link.title}
-                  href={link.href}
-                  target={link.href.startsWith("mailto") ? undefined : "_blank"}
-                  rel="noreferrer"
-                  className="group relative flex items-center justify-between p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/5 hover:bg-white/[0.05] hover:border-primary/40 transition-all duration-700 overflow-hidden shadow-2xl"
-                  initial={{ opacity: 0, x: 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: i * 0.1, type: "spring" }}
-                  whileHover={{ 
-                    x: 10,
-                    transition: { duration: 0.3 }
-                  }}
-                  animate={{
-                    y: [0, -5, 0],
-                  }}
-                  transition={{
-                    y: {
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: i * 0.5,
-                    }
+      <div className="layout-grid relative z-10">
+        {/* ── Left — CTA heading ── */}
+        <div className="grid-col-half flex flex-col justify-center mb-16 lg:mb-0">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 1.2, ease }}
+          >
+            <span className="section-label mb-6 block">Get in Touch</span>
+            <h2
+              className="text-fluid-h2 font-black tracking-tighter leading-[0.85] heading-display mb-8"
+            >
+              LET&apos;S BUILD
+              <br />
+              <span style={{ color: "hsl(var(--primary))" }}>SOMETHING</span>
+              <br />
+              LEGENDARY.
+            </h2>
+            <p
+              className="text-base md:text-lg max-w-md leading-relaxed"
+              style={{ color: "hsl(var(--foreground) / 0.45)" }}
+            >
+              Currently seeking a challenging role where I can push the
+              boundaries of AI and Full-Stack development.
+            </p>
+          </motion.div>
+        </div>
+
+        {/* ── Right — Contact link cards ── */}
+        <div
+          className="col-span-4 md:col-span-8 lg:col-span-5 lg:col-start-8 flex flex-col justify-center space-y-4 md:space-y-5"
+        >
+          {contactLinks.map((link, i) => (
+            <motion.a
+              key={link.title}
+              href={link.href}
+              target={link.href.startsWith("mailto") ? undefined : "_blank"}
+              rel="noreferrer"
+              className="group relative flex items-center justify-between p-6 md:p-8 rounded-2xl md:rounded-3xl border transition-all duration-500 overflow-hidden"
+              style={{
+                background: "hsl(var(--surface-1) / 0.5)",
+                borderColor: "hsl(var(--border))",
+              }}
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 1, ease, delay: i * 0.12 }}
+              whileHover={{
+                x: -6,
+                borderColor: "hsl(var(--primary) / 0.35)",
+                background: "hsl(var(--surface-2) / 0.5)",
+              }}
+              aria-label={link.aria}
+            >
+              {/* Top shine reflection */}
+              <div
+                className="absolute top-0 left-0 right-0 h-px transition-all duration-700"
+                style={{
+                  background:
+                    "linear-gradient(to right, transparent, hsl(var(--foreground) / 0.06), transparent)",
+                }}
+                aria-hidden="true"
+              />
+
+              <div className="flex items-center gap-5">
+                <div
+                  className="w-12 h-12 rounded-xl border flex items-center justify-center shrink-0 transition-all duration-500 group-hover:border-primary/30 group-hover:bg-primary/5"
+                  style={{
+                    background: "hsl(var(--surface-2) / 0.6)",
+                    borderColor: "hsl(var(--border-bright))",
                   }}
                 >
-                  {/* Wavy Background Effect */}
-                  <motion.div 
-                    className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100"
-                    animate={{
-                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    }}
-                    transition={{
-                      duration: 10,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
+                  <link.icon
+                    size={22}
+                    className="transition-colors duration-500"
+                    style={{ color: "hsl(var(--muted-foreground))" }}
+                    aria-hidden="true"
                   />
-                  
-                  <div className="flex items-center gap-6 relative z-10">
-                    <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 shadow-inner">
-                      <link.icon size={28} className="text-white/70 group-hover:text-primary transition-colors" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-mono tracking-widest text-white/20 uppercase mb-1">{link.title}</h3>
-                      <p className="text-xl font-bold tracking-tight text-white/90 group-hover:text-primary transition-all duration-500">{link.label}</p>
-                    </div>
-                  </div>
+                </div>
+                <div>
+                  <h3
+                    className="text-[10px] md:text-xs font-mono tracking-[0.2em] uppercase mb-1"
+                    style={{ color: "hsl(var(--muted-foreground) / 0.7)" }}
+                  >
+                    {link.title}
+                  </h3>
+                  <p
+                    className="text-base md:text-lg font-bold transition-colors duration-500 group-hover:text-primary"
+                    style={{ color: "hsl(var(--foreground) / 0.85)" }}
+                  >
+                    {link.label}
+                  </p>
+                </div>
+              </div>
 
-                  <div className="relative z-10 flex flex-col items-end">
-                    <motion.div
-                      animate={{
-                        x: [0, 5, 0],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      <ExternalLink size={20} className="text-white/20 group-hover:text-primary transition-all" />
-                    </motion.div>
-                    <span className="hidden md:block text-[9px] font-mono text-white/10 mt-3 opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">
-                      {link.value}
-                    </span>
-                  </div>
-
-                  {/* Reflection line */}
-                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:via-primary/30 transition-all duration-700" />
-                </motion.a>
-              ))}
-            </div>
-          </div>
-
-          {/* Big background "CONTACT" text */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 pointer-events-none select-none opacity-[0.015]">
-            <h2 className="text-[30vw] font-black tracking-tighter">CONTACT</h2>
-          </div>
+              <ExternalLink
+                size={16}
+                className="transition-all duration-300 group-hover:text-primary/60 shrink-0"
+                style={{ color: "hsl(var(--foreground) / 0.2)" }}
+                aria-hidden="true"
+              />
+            </motion.a>
+          ))}
         </div>
       </div>
     </section>
