@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     description:
       "Portfolio of Surya Janardhan Chintala. AI Engineer specializing in autonomous AI agents and production-grade full-stack applications.",
     type: "website",
-    url: "https://SuryaJanardhan.github.io/SuryaJanardhan/",
+    url: "https://SuryaJanardhan.github.io/Surya-Janardhan/",
   },
   twitter: {
     card: "summary_large_image",
