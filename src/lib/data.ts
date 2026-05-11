@@ -19,9 +19,9 @@ export const personalInfo = {
 };
 
 export const stats = [
-  { label: "AI Agents Deployed", value: 20, suffix: "+" },
-  { label: "Problems Solved", value: 800, suffix: "+" },
-  { label: "Months Experience", value: 10, suffix: "" },
+  { label: "AI Agents Deployed", value: 20, suffix: "+", decimals: 0 },
+  { label: "Problems Solved", value: 800, suffix: "+", decimals: 0 },
+  { label: "Months Experience", value: 10, suffix: "", decimals: 0 },
 ];
 
 export const experience = {
