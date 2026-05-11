@@ -18,8 +18,8 @@ export default function Navbar() {
       <div className="pointer-events-auto flex items-center justify-center">
         <FloatingDock 
           items={navLinks} 
-          desktopClassName="bg-[hsl(222_35%_7%/0.65)] backdrop-blur-2xl border-white/10 shadow-2xl glaze-card"
-          mobileClassName="bg-[hsl(222_35%_7%/0.85)] border-white/10"
+          desktopClassName=""
+          mobileClassName=""
         />
       </div>
     </div>
