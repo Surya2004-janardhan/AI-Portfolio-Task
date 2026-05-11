@@ -145,7 +145,7 @@ export default function Hero() {
             >
               <span className="flex items-center gap-2">
                 <Download size={16} aria-hidden="true" />
-                GET CV
+                GET RESUME
               </span>
             </MagneticButton>
           </motion.div>
