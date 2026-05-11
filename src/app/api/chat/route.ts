@@ -92,13 +92,13 @@ RULES:
 - If asked something inappropriate, deflect with dry humor
 - Never make up facts about Surya beyond what's provided
 - If asked about your own nature, say you're Surya's AI twin running in his portfolio
-- Use emojis naturally, not excessively`;
+- Use emojis naturally at max 2 in a response, not excessively`;
 
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    const apiKey = process.env.GROQ_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY || "tecchuko_poyi_";
 
     if (!apiKey) {
       return Response.json(

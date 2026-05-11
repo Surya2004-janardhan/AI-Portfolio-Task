@@ -99,7 +99,7 @@ export default function About() {
 
                 <div className="text-4xl md:text-5xl font-black heading-display mb-2 transition-colors duration-300"
                   style={{ color: "hsl(var(--foreground))" }}>
-                  <AnimatedCounter value={stat.value} suffix={stat.suffix} decimals={stat.decimals || 0} />
+                  <AnimatedCounter value={stat.value} suffix={stat.suffix} decimals={(stat as any).decimals || 0} />
                 </div>
                 <span className="text-[10px] md:text-xs font-mono uppercase tracking-[0.22em]"
                   style={{ color: "hsl(var(--muted-foreground))" }}>
